@@ -36,11 +36,12 @@
             copyPathToolStripMenuItem = new ToolStripMenuItem();
             setDirectoryPathToolStripMenuItem = new ToolStripMenuItem();
             fileOperationsToolStripMenuItem = new ToolStripMenuItem();
-            editToolStripMenuItem = new ToolStripMenuItem();
+            renameToolStripMenuItem = new ToolStripMenuItem();
             cutToolStripMenuItem = new ToolStripMenuItem();
             copyToolStripMenuItem = new ToolStripMenuItem();
             pasteToolStripMenuItem = new ToolStripMenuItem();
             deleteToolStripMenuItem = new ToolStripMenuItem();
+            openToolStripMenuItem = new ToolStripMenuItem();
             executeToolStripMenuItem = new ToolStripMenuItem();
             windowsExplorerToolStripMenuItem = new ToolStripMenuItem();
             windowsCMDToolStripMenuItem = new ToolStripMenuItem();
@@ -77,84 +78,111 @@
             // 
             // contextMenu
             // 
-            contextMenu.Items.AddRange(new ToolStripItem[] { copyPathToolStripMenuItem, setDirectoryPathToolStripMenuItem, fileOperationsToolStripMenuItem, executeToolStripMenuItem, windowsExplorerToolStripMenuItem, windowsCMDToolStripMenuItem });
+            contextMenu.BackColor = Color.Black;
+            contextMenu.Font = new Font("Consolas", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            contextMenu.Items.AddRange(new ToolStripItem[] { copyPathToolStripMenuItem, setDirectoryPathToolStripMenuItem, fileOperationsToolStripMenuItem, openToolStripMenuItem, executeToolStripMenuItem, windowsExplorerToolStripMenuItem, windowsCMDToolStripMenuItem });
             contextMenu.Name = "contextMenu";
-            contextMenu.Size = new Size(177, 136);
+            contextMenu.Size = new Size(215, 158);
             // 
             // copyPathToolStripMenuItem
             // 
+            copyPathToolStripMenuItem.ForeColor = Color.Lime;
             copyPathToolStripMenuItem.Name = "copyPathToolStripMenuItem";
-            copyPathToolStripMenuItem.Size = new Size(176, 22);
+            copyPathToolStripMenuItem.Size = new Size(214, 22);
             copyPathToolStripMenuItem.Text = "Copy Path";
             copyPathToolStripMenuItem.Click += Copy_Path_Mode;
             // 
             // setDirectoryPathToolStripMenuItem
             // 
+            setDirectoryPathToolStripMenuItem.ForeColor = Color.Lime;
             setDirectoryPathToolStripMenuItem.Name = "setDirectoryPathToolStripMenuItem";
-            setDirectoryPathToolStripMenuItem.Size = new Size(176, 22);
+            setDirectoryPathToolStripMenuItem.Size = new Size(214, 22);
             setDirectoryPathToolStripMenuItem.Text = "Set Directory (Path)";
             setDirectoryPathToolStripMenuItem.Click += GoToDir;
             // 
             // fileOperationsToolStripMenuItem
             // 
-            fileOperationsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { editToolStripMenuItem, cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, deleteToolStripMenuItem });
+            fileOperationsToolStripMenuItem.BackColor = Color.Black;
+            fileOperationsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { renameToolStripMenuItem, cutToolStripMenuItem, copyToolStripMenuItem, pasteToolStripMenuItem, deleteToolStripMenuItem });
+            fileOperationsToolStripMenuItem.ForeColor = Color.Lime;
             fileOperationsToolStripMenuItem.Name = "fileOperationsToolStripMenuItem";
-            fileOperationsToolStripMenuItem.Size = new Size(176, 22);
+            fileOperationsToolStripMenuItem.Size = new Size(214, 22);
             fileOperationsToolStripMenuItem.Text = "File Operations";
             // 
-            // editToolStripMenuItem
+            // renameToolStripMenuItem
             // 
-            editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new Size(107, 22);
-            editToolStripMenuItem.Text = "Edit";
-            editToolStripMenuItem.Click += Edit_Mode;
+            renameToolStripMenuItem.BackColor = Color.Black;
+            renameToolStripMenuItem.ForeColor = Color.Lime;
+            renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            renameToolStripMenuItem.Size = new Size(116, 22);
+            renameToolStripMenuItem.Text = "Rename";
+            renameToolStripMenuItem.Click += Rename_Mode;
             // 
             // cutToolStripMenuItem
             // 
+            cutToolStripMenuItem.BackColor = Color.Black;
+            cutToolStripMenuItem.ForeColor = Color.Lime;
             cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            cutToolStripMenuItem.Size = new Size(107, 22);
+            cutToolStripMenuItem.Size = new Size(116, 22);
             cutToolStripMenuItem.Text = "Cut";
             cutToolStripMenuItem.Click += Cut_Mode;
             // 
             // copyToolStripMenuItem
             // 
+            copyToolStripMenuItem.BackColor = Color.Black;
+            copyToolStripMenuItem.ForeColor = Color.Lime;
             copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            copyToolStripMenuItem.Size = new Size(107, 22);
+            copyToolStripMenuItem.Size = new Size(116, 22);
             copyToolStripMenuItem.Text = "Copy";
             copyToolStripMenuItem.Click += Copy_Mode;
             // 
             // pasteToolStripMenuItem
             // 
+            pasteToolStripMenuItem.BackColor = Color.Black;
+            pasteToolStripMenuItem.ForeColor = Color.Lime;
             pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            pasteToolStripMenuItem.Size = new Size(107, 22);
+            pasteToolStripMenuItem.Size = new Size(116, 22);
             pasteToolStripMenuItem.Text = "Paste";
             pasteToolStripMenuItem.Click += Paste_Mode;
             // 
             // deleteToolStripMenuItem
             // 
+            deleteToolStripMenuItem.BackColor = Color.Black;
+            deleteToolStripMenuItem.ForeColor = Color.Lime;
             deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            deleteToolStripMenuItem.Size = new Size(107, 22);
+            deleteToolStripMenuItem.Size = new Size(116, 22);
             deleteToolStripMenuItem.Text = "Delete";
             deleteToolStripMenuItem.Click += Delete_Mode;
             // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.ForeColor = Color.Lime;
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(214, 22);
+            openToolStripMenuItem.Text = "Open";
+            openToolStripMenuItem.Click += Open_Mode;
+            // 
             // executeToolStripMenuItem
             // 
+            executeToolStripMenuItem.ForeColor = Color.Lime;
             executeToolStripMenuItem.Name = "executeToolStripMenuItem";
-            executeToolStripMenuItem.Size = new Size(176, 22);
+            executeToolStripMenuItem.Size = new Size(214, 22);
             executeToolStripMenuItem.Text = "Execute";
             executeToolStripMenuItem.Click += Execute_Mode;
             // 
             // windowsExplorerToolStripMenuItem
             // 
+            windowsExplorerToolStripMenuItem.ForeColor = Color.Lime;
             windowsExplorerToolStripMenuItem.Name = "windowsExplorerToolStripMenuItem";
-            windowsExplorerToolStripMenuItem.Size = new Size(176, 22);
+            windowsExplorerToolStripMenuItem.Size = new Size(214, 22);
             windowsExplorerToolStripMenuItem.Text = "Windows Explorer";
             windowsExplorerToolStripMenuItem.Click += Open_Windows_Explorer;
             // 
             // windowsCMDToolStripMenuItem
             // 
+            windowsCMDToolStripMenuItem.ForeColor = Color.Lime;
             windowsCMDToolStripMenuItem.Name = "windowsCMDToolStripMenuItem";
-            windowsCMDToolStripMenuItem.Size = new Size(176, 22);
+            windowsCMDToolStripMenuItem.Size = new Size(214, 22);
             windowsCMDToolStripMenuItem.Text = "Windows CMD";
             windowsCMDToolStripMenuItem.Click += Open_CMD;
             // 
@@ -183,7 +211,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.Font = new Font("Consolas", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.Location = new Point(12, 533);
             label3.Name = "label3";
             label3.Size = new Size(28, 14);
@@ -220,7 +248,6 @@
         private Label label2;
         private ToolStripMenuItem setDirectoryPathToolStripMenuItem;
         private ToolStripMenuItem fileOperationsToolStripMenuItem;
-        private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem copyToolStripMenuItem;
         private ToolStripMenuItem pasteToolStripMenuItem;
         private ToolStripMenuItem deleteToolStripMenuItem;
@@ -228,5 +255,7 @@
         private ToolStripMenuItem windowsExplorerToolStripMenuItem;
         private ToolStripMenuItem windowsCMDToolStripMenuItem;
         private ToolStripMenuItem cutToolStripMenuItem;
+        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem renameToolStripMenuItem;
     }
 }

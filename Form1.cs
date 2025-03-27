@@ -12,7 +12,7 @@ namespace SimpleFileExplorer {
         private string current_dir;
         private StringCollection sel_files;
         private StringCollection del_files;
-		private bool isForMove;
+        private bool isForMove;
         public Form1()
         {
             InitializeComponent();
@@ -28,6 +28,10 @@ namespace SimpleFileExplorer {
             this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.CenterScreen;
             //this.TopMost = true;
+            // Personaliza o ContextMenuStrip sem opacidade
+            listViewFiles.ContextMenuStrip.BackColor = Color.Black; // Fundo preto
+            listViewFiles.ContextMenuStrip.ForeColor = Color.Lime; // Texto verde
+            listViewFiles.ContextMenuStrip.ShowImageMargin = false; // Remove margem de imagem, se não usada
         }
         private void LoadDirectory(string path)
         {
@@ -121,6 +125,7 @@ namespace SimpleFileExplorer {
 
                 this.Text = "Simple File Explorer - " + path; // Atualiza o título da janela
                 current_dir = path;
+                label3.Text = path;
             }
             catch (UnauthorizedAccessException)
             {
@@ -156,7 +161,7 @@ namespace SimpleFileExplorer {
             // -- 
             if (e.KeyCode == Keys.Right) // Entra no diretório 
             {
-                if (label1.Text == "Delete") return;
+                if (label1.Text == "Delete" || label1.Text == "Rename") return;
                 label1.Text = "Copy Path";
                 label1.ForeColor = System.Drawing.Color.Lime; // Verde para diretórios
                 if (listViewFiles.SelectedItems.Count > 0)
@@ -174,9 +179,9 @@ namespace SimpleFileExplorer {
             }
             if (e.KeyCode == Keys.Left)
             {
-                if (label1.Text == "Delete") return;
+                if (label1.Text == "Delete" || label1.Text == "Rename") return;
                 label1.Text = "Copy Path";
-				label1.ForeColor = System.Drawing.Color.Lime; // Verde para diretórios
+                label1.ForeColor = System.Drawing.Color.Lime; // Verde para diretórios
                 if (listViewFiles.SelectedItems.Count > 0)
                 {
                     LoadDirectory(parent_dir);
@@ -263,32 +268,32 @@ namespace SimpleFileExplorer {
                     }
                     else if (label1.Text == "Copy")
                     {
-						foreach (ListViewItem item in listViewFiles.SelectedItems)
-						{
-							string item_path = item.Tag.ToString();
-							if (sel_files.Contains(item_path))
-							{
-								sel_files.Remove(item_path);
-								item.ForeColor = System.Drawing.Color.White;
-								item.BackColor = System.Drawing.Color.Black;
-							}
-							else
-							{
-								sel_files.Add(item_path);
-								item.ForeColor = System.Drawing.Color.Yellow;
-								item.BackColor = System.Drawing.Color.DarkBlue;
-							}
-						}
-						if (sel_files.Count > 1) { label2.Text = "(" + sel_files.Count.ToString() + ")" + path; }
-						else
-						{
-							label2.Text = path;
-						}
-						
-						Clipboard.SetFileDropList(sel_files);
-						isForMove = false;
-						return;
-						/*
+                        foreach (ListViewItem item in listViewFiles.SelectedItems)
+                        {
+                            string item_path = item.Tag.ToString();
+                            if (sel_files.Contains(item_path))
+                            {
+                                sel_files.Remove(item_path);
+                                item.ForeColor = System.Drawing.Color.White;
+                                item.BackColor = System.Drawing.Color.Black;
+                            }
+                            else
+                            {
+                                sel_files.Add(item_path);
+                                item.ForeColor = System.Drawing.Color.Yellow;
+                                item.BackColor = System.Drawing.Color.DarkBlue;
+                            }
+                        }
+                        if (sel_files.Count > 1) { label2.Text = "(" + sel_files.Count.ToString() + ")" + path; }
+                        else
+                        {
+                            label2.Text = path;
+                        }
+
+                        Clipboard.SetFileDropList(sel_files);
+                        isForMove = false;
+                        return;
+                        /*
                         foreach (ListViewItem item in listViewFiles.SelectedItems)
                         {
                             string item_path = item.Tag.ToString();
@@ -313,164 +318,51 @@ namespace SimpleFileExplorer {
                         return;
 						*/
                     }
-					else if (label1.Text == "Cut")
-					{
-						foreach (ListViewItem item in listViewFiles.SelectedItems)
-						{
-							string item_path = item.Tag.ToString();
-							if (sel_files.Contains(item_path))
-							{
-								sel_files.Remove(item_path);
-								item.ForeColor = System.Drawing.Color.White;
-								item.BackColor = System.Drawing.Color.Black;
-							}
-							else
-							{
-								sel_files.Add(item_path);
-								item.ForeColor = System.Drawing.Color.Yellow;
-								item.BackColor = System.Drawing.Color.DarkBlue;
-							}
-						}
-						if (sel_files.Count > 1) { label2.Text = "(" + sel_files.Count.ToString() + ")" + path; }
-						else
-						{
-							label2.Text = path;
-						}
-						
-						Clipboard.SetFileDropList(sel_files);
-						isForMove = true;
-						return;
-					}
+                    else if (label1.Text == "Cut")
+                    {
+                        foreach (ListViewItem item in listViewFiles.SelectedItems)
+                        {
+                            string item_path = item.Tag.ToString();
+                            if (sel_files.Contains(item_path))
+                            {
+                                sel_files.Remove(item_path);
+                                item.ForeColor = System.Drawing.Color.White;
+                                item.BackColor = System.Drawing.Color.Black;
+                            }
+                            else
+                            {
+                                sel_files.Add(item_path);
+                                item.ForeColor = System.Drawing.Color.Yellow;
+                                item.BackColor = System.Drawing.Color.DarkBlue;
+                            }
+                        }
+                        if (sel_files.Count > 1) { label2.Text = "(" + sel_files.Count.ToString() + ")" + path; }
+                        else
+                        {
+                            label2.Text = path;
+                        }
+
+                        Clipboard.SetFileDropList(sel_files);
+                        isForMove = true;
+                        return;
+                    }
                     else if (label1.Text == "Paste")
                     {
-						// >>
-						Clipboard.SetFileDropList(sel_files);
-						if (!Clipboard.ContainsFileDropList()) return;
-						string action = isForMove ? "Move" : "Paste";
-						if (MessageBox.Show($"{action} the Files and Folders?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.No) return;
-
-						try
-						{
-							if (Clipboard.ContainsFileDropList())
-							{
-								StringCollection filesToProcess = Clipboard.GetFileDropList();
-								int totalItems = 0;
-								int itemsProcessed = 0;
-
-								// Calcula o total de itens
-								foreach (string path_it in filesToProcess)
-								{
-									if (File.Exists(path_it))
-									{
-										totalItems++;
-									}
-									else if (Directory.Exists(path_it))
-									{
-										totalItems += CountItemsInDirectory(path_it);
-									}
-								}
-
-								label3.Text = $"{action}ing: 0/{totalItems}";
-								Application.DoEvents();
-
-								string[] pathsToProcess = new string[filesToProcess.Count];
-								filesToProcess.CopyTo(pathsToProcess, 0);
-
-								foreach (string sourcePath in pathsToProcess)
-								{
-									string itemName = Path.GetFileName(sourcePath);
-									string destPath = Path.Combine(current_dir, itemName);
-
-									if (File.Exists(sourcePath)) // Arquivo
-									{
-										if (File.Exists(destPath))
-										{
-											DialogResult result = MessageBox.Show($"The '{itemName}' already exists. Overwrite it?",
-												"Confirmation", MessageBoxButtons.YesNo);
-											if (result == DialogResult.No) continue;
-											if (isForMove && File.Exists(destPath)) File.Delete(destPath); // Remove destino existente antes de mover
-										}
-										if (isForMove)
-										{
-											File.Move(sourcePath, destPath); // Move diretamente
-										}
-										else
-										{
-											File.Copy(sourcePath, destPath, true); // Copia com sobrescrita
-										}
-										itemsProcessed++;
-										label3.Text = $"{action}ing: {itemsProcessed}/{totalItems}";
-										Application.DoEvents();
-									}
-									else if (Directory.Exists(sourcePath)) // Diretório
-									{
-										if (Directory.Exists(destPath))
-										{
-											DialogResult result = MessageBox.Show($"The '{itemName}' already exists. Overwrite it?",
-												"Confirmation", MessageBoxButtons.YesNo);
-											if (result == DialogResult.No) continue;
-											if (isForMove && Directory.Exists(destPath)) Directory.Delete(destPath, true); // Remove destino existente
-										}
-										if (isForMove)
-										{
-											Directory.Move(sourcePath, destPath); // Move diretamente
-										}
-										else
-										{
-											CopyDirectoryWithProgress(sourcePath, destPath, ref itemsProcessed, totalItems); // Copia recursivamente
-										}
-										if (isForMove) itemsProcessed += CountItemsInDirectory(destPath); // Atualiza contador para diretórios movidos
-										label3.Text = $"{action}ing: {itemsProcessed}/{totalItems}";
-										Application.DoEvents();
-									}
-								}
-
-								if (itemsProcessed > 0)
-								{
-									MessageBox.Show($"{action}d {itemsProcessed} item(s) in {current_dir}");
-									LoadDirectory(current_dir);
-									if (isForMove) sel_files.Clear(); // Limpa sel_files após mover
-								}
-								else
-								{
-									MessageBox.Show("Aborted.");
-								}
-								label3.Text = "...";
-							}
-							else
-							{
-								MessageBox.Show("No files or folders in Clipboard!");
-							}
-						}
-						catch (UnauthorizedAccessException)
-						{
-							MessageBox.Show($"Access Denied while {action.ToLower()}ing.");
-							label3.Text = "Error: Access Denied";
-						}
-						catch (Exception ex)
-						{
-							MessageBox.Show($"Error while {action.ToLower()}ing: " + ex.Message);
-							label3.Text = "Error: " + ex.Message;
-						}
-						return;
-						
-						// <<
-						
-                        /*
-                        Clipboard.SetFileDropList(sel_files); // Copia para a área de transferência
+                        Clipboard.SetFileDropList(sel_files);
                         if (!Clipboard.ContainsFileDropList()) return;
-                        if (MessageBox.Show("Paste the Files and Folders?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.No) return;
+                        string action = isForMove ? "Move" : "Paste";
+                        if (MessageBox.Show($"{action} the Files and Folders?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.No) return;
 
                         try
                         {
                             if (Clipboard.ContainsFileDropList())
                             {
-                                StringCollection filesToCopy = Clipboard.GetFileDropList();
+                                StringCollection filesToProcess = Clipboard.GetFileDropList();
                                 int totalItems = 0;
-                                int itemsCopied = 0;
+                                int itemsProcessed = 0;
 
-                                // Calcula o total de itens a serem copiados
-                                foreach (string path_it in filesToCopy)
+                                // Calcula o total de itens
+                                foreach (string path_it in filesToProcess)
                                 {
                                     if (File.Exists(path_it))
                                     {
@@ -478,50 +370,76 @@ namespace SimpleFileExplorer {
                                     }
                                     else if (Directory.Exists(path_it))
                                     {
-                                        totalItems += CountItemsInDirectory(path_it); // Usa o mesmo método de contagem
+                                        totalItems += CountItemsInDirectory(path_it);
                                     }
                                 }
 
-                                label3.Text = $"Copying: 0/{totalItems}";
-                                Application.DoEvents(); // Atualiza a interface imediatamente
+                                label3.Text = $"{action}ing: 0/{totalItems}";
+                                Application.DoEvents();
 
-                                string[] pathsToCopy = new string[filesToCopy.Count];
-                                filesToCopy.CopyTo(pathsToCopy, 0);
+                                string[] pathsToProcess = new string[filesToProcess.Count];
+                                filesToProcess.CopyTo(pathsToProcess, 0);
 
-                                foreach (string sourcePath in pathsToCopy)
+                                foreach (string sourcePath in pathsToProcess)
                                 {
                                     string itemName = Path.GetFileName(sourcePath);
                                     string destPath = Path.Combine(current_dir, itemName);
 
-                                    if (File.Exists(sourcePath)) // Se for um arquivo
+                                    if (File.Exists(sourcePath)) // Arquivo
                                     {
                                         if (File.Exists(destPath))
                                         {
                                             DialogResult result = MessageBox.Show($"The '{itemName}' already exists. Overwrite it?",
                                                 "Confirmation", MessageBoxButtons.YesNo);
                                             if (result == DialogResult.No) continue;
+                                            if (isForMove && File.Exists(destPath)) File.Delete(destPath); // Remove destino existente antes de mover
                                         }
-                                        File.Copy(sourcePath, destPath, true);
-                                        itemsCopied++;
-                                        label3.Text = $"Copying: {itemsCopied}/{totalItems}";
+                                        if (isForMove)
+                                        {
+                                            File.Move(sourcePath, destPath); // Move diretamente
+                                        }
+                                        else
+                                        {
+                                            File.Copy(sourcePath, destPath, true); // Copia com sobrescrita
+                                        }
+                                        itemsProcessed++;
+                                        label3.Text = $"{action}ing: {itemsProcessed}/{totalItems}";
                                         Application.DoEvents();
                                     }
-                                    else if (Directory.Exists(sourcePath)) // Se for um diretório
+                                    else if (Directory.Exists(sourcePath)) // Diretório
                                     {
-                                        CopyDirectoryWithProgress(sourcePath, destPath, ref itemsCopied, totalItems);
+                                        if (Directory.Exists(destPath))
+                                        {
+                                            DialogResult result = MessageBox.Show($"The '{itemName}' already exists. Overwrite it?",
+                                                "Confirmation", MessageBoxButtons.YesNo);
+                                            if (result == DialogResult.No) continue;
+                                            if (isForMove && Directory.Exists(destPath)) Directory.Delete(destPath, true); // Remove destino existente
+                                        }
+                                        if (isForMove)
+                                        {
+                                            Directory.Move(sourcePath, destPath); // Move diretamente
+                                        }
+                                        else
+                                        {
+                                            CopyDirectoryWithProgress(sourcePath, destPath, ref itemsProcessed, totalItems); // Copia recursivamente
+                                        }
+                                        if (isForMove) itemsProcessed += CountItemsInDirectory(destPath); // Atualiza contador para diretórios movidos
+                                        label3.Text = $"{action}ing: {itemsProcessed}/{totalItems}";
+                                        Application.DoEvents();
                                     }
                                 }
 
-                                if (itemsCopied > 0)
+                                if (itemsProcessed > 0)
                                 {
-                                    MessageBox.Show($"Pasted {itemsCopied} item(s) in {current_dir}");
+                                    MessageBox.Show($"{action}d {itemsProcessed} item(s) in {current_dir}");
                                     LoadDirectory(current_dir);
+                                    if (isForMove) sel_files.Clear(); // Limpa sel_files após mover
                                 }
                                 else
                                 {
                                     MessageBox.Show("Aborted.");
                                 }
-                                label3.Text = "..."; // Reseta o Label
+                                label3.Text = "...";
                             }
                             else
                             {
@@ -530,17 +448,15 @@ namespace SimpleFileExplorer {
                         }
                         catch (UnauthorizedAccessException)
                         {
-                            MessageBox.Show("Access Denied while pasting.");
+                            MessageBox.Show($"Access Denied while {action.ToLower()}ing.");
                             label3.Text = "Error: Access Denied";
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("Error while pasting: " + ex.Message);
+                            MessageBox.Show($"Error while {action.ToLower()}ing: " + ex.Message);
                             label3.Text = "Error: " + ex.Message;
                         }
                         return;
-                        */
-
                     }
                     else if (label1.Text == "Execute")
                     {
@@ -579,6 +495,97 @@ namespace SimpleFileExplorer {
                         label1.Text = "Copy Path";
                         label1.ForeColor = System.Drawing.Color.Lime; // Verde para diretórios
                     }
+                    else if (label1.Text == "Rename")
+                    {
+                        if (listViewFiles.SelectedItems.Count > 1)
+                        {
+                            MessageBox.Show("Please select only one item to rename.");
+                            return;
+                        }
+                        string oldName = Path.GetFileName(path);
+                        string newName = Interaction.InputBox(
+                            "Enter the new name:", // Mensagem
+                            "Rename Item",         // Título
+                            oldName                // Nome atual como padrão
+                        );
+                        if (string.IsNullOrWhiteSpace(newName) || newName == oldName) return;
+                        // >> 2
+                        try
+                        {
+                            string directory = Path.GetDirectoryName(path);
+                            string newPath = Path.Combine(directory, newName);
+
+                            if (File.Exists(path)) // Arquivo
+                            {
+                                if (File.Exists(newPath))
+                                {
+                                    MessageBox.Show($"The name '{newName}' already exists.");
+                                    return;
+                                }
+                                File.Move(path, newPath); // Supostamente aqui há renomeação 
+                            }
+                            else if (Directory.Exists(path)) // Diretório
+                            {
+                                if (Directory.Exists(newPath))
+                                {
+                                    MessageBox.Show($"The name '{newName}' already exists.");
+                                    return;
+                                }
+                                Directory.Move(path, newPath);
+                            }
+
+                            LoadDirectory(current_dir); // Atualiza o ListView
+                            label3.Text = $"Renamed to: {newName}";
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            MessageBox.Show("Access Denied while renaming.");
+                            label3.Text = "Error: Access Denied";
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error while renaming: " + ex.Message);
+                            label3.Text = "Error: " + ex.Message;
+                        }
+                        label1.Text = "Copy Path"; // Volta ao modo padrão
+                        label1.ForeColor = System.Drawing.Color.Lime;
+                        return;
+                    }
+					else if (label1.Text == "Open")
+					{
+						// >>
+						try
+						{
+							if (listViewFiles.SelectedItems.Count > 0)
+							{
+								ListViewItem selectedItem2 = listViewFiles.SelectedItems[0];
+								string path2 = selectedItem2.Tag.ToString();
+
+								if (selectedItem2.SubItems[1].Text == "File") // Apenas arquivos
+								{
+									ProcessStartInfo processInfo = new ProcessStartInfo
+									{
+										FileName = path2,
+										UseShellExecute = true // Usa o shell para abrir com o programa padrão
+									};
+									Process.Start(processInfo);
+									label3.Text = $"Opened: {Path.GetFileName(path2)}";
+								}
+								else
+								{
+									MessageBox.Show("Please select a file to open.");
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show("Error opening file: " + ex.Message);
+						}
+						label1.Text = "Copy Path";
+						label1.ForeColor = System.Drawing.Color.Lime;
+						return;
+						// <<
+					}
                 }
             }
             if (e.KeyCode == Keys.Delete)
@@ -892,8 +899,22 @@ namespace SimpleFileExplorer {
 
         private void Cut_Mode(object sender, EventArgs e)
         {
-			label1.Text = "Cut";
-			label1.ForeColor = System.Drawing.Color.Orange; // Cor diferente para distinguir
+            label1.Text = "Cut";
+            label1.ForeColor = System.Drawing.Color.Orange; // Cor diferente para distinguir
+        }
+
+        private void Rename_Mode(object sender, EventArgs e)
+        {
+            label1.Text = "Rename";
+            label1.ForeColor = System.Drawing.Color.Red; // Verde para diretórios
+        }
+
+        private void Open_Mode(object sender, EventArgs e)
+        {
+			// >>
+			label1.Text = "Open";
+			label1.ForeColor = System.Drawing.Color.Cyan; // Cor diferente para destacar
+			// <<
         }
     }
 }
