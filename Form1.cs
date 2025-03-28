@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Collections.Specialized; // Necessário para StringCollection
 using Microsoft.VisualBasic;
 using System.Diagnostics; // Para Process.Start
+using System.Drawing;
 
 namespace SimpleFileExplorer {
     public partial class Form1 : Form
@@ -32,6 +33,7 @@ namespace SimpleFileExplorer {
             listViewFiles.ContextMenuStrip.BackColor = Color.Black; // Fundo preto
             listViewFiles.ContextMenuStrip.ForeColor = Color.Lime; // Texto verde
             listViewFiles.ContextMenuStrip.ShowImageMargin = false; // Remove margem de imagem, se não usada
+			this.Icon = new Icon("app_icon.ico");
         }
         private void LoadDirectory(string path)
         {
@@ -348,6 +350,7 @@ namespace SimpleFileExplorer {
                     }
                     else if (label1.Text == "Paste")
                     {
+						if (sel_files.Count == 0) return;
                         Clipboard.SetFileDropList(sel_files);
                         if (!Clipboard.ContainsFileDropList()) return;
                         string action = isForMove ? "Move" : "Paste";
