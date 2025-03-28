@@ -26,3 +26,8 @@ Context Menu Options:
 4. Execute : Set mode to execute.
 5. Windows Explorer : Open the current directory of pointed file in the windows explorer (explorer.exe) or if the pointed item is a directory open the directory.
 6. Windows CMD : Open the command prompt (cmd.exe) in the current directory of pointed file or if the pointed item is a directory open inside that directory.
+
+## Videos
+1. https://youtu.be/U5DsChUS2is?si=P-B_WGgtpNVgcBhv
+2. https://youtu.be/tlE5NIXcAfw?si=0EmuQ193yQdUGHAO
+3. https://youtu.be/Rvcw2chJIaU?si=Fn_un90_Cq8GE2j4
