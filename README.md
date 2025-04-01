@@ -1,6 +1,8 @@
 # TExplorer
 Minimalist Translucent File Explorer. Designed to be safe and to be used mainly with keyboard input.
 
+![](FExplorer.PNG) 
+
 Commands:
 1. Alt+Arrow_Key : Move the application window.
 2. Right Arrow Key : Enter a directory.
