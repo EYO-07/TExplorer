@@ -1,11 +1,18 @@
+// FExplorer ~ Minimalist Translucent File Explorer
+
 using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections.Specialized; // Necessário para StringCollection
+using System.Collections.Generic;
 using Microsoft.VisualBasic;
 using System.Diagnostics; // Para Process.Start
 using System.Drawing;
 
+// Form Constructor ~ SimpleFileExplorer {} || Form1 {} || Form1() || InitializeComponent() | ...
+// Keyboard Input ~ SimpleFileExplorer {} || Form1 {} || Form1() | ... | listViewFiles_KeyDown() || % ...
+// LoadDirectory() || { .Items.Clear, .Items.Add,  }
+// Execute/Open ~ SimpleFileExplorer {} || Form1 {} || Form1() | ... | listViewFiles_KeyDown() || ... | % enter || ... || % Execute | % Open 
 namespace SimpleFileExplorer {
     public partial class Form1 : Form
     {
@@ -14,9 +21,16 @@ namespace SimpleFileExplorer {
         private StringCollection sel_files;
         private StringCollection del_files;
         private bool isForMove;
+		private System.Drawing.Point _dragOffSet;
+		private bool _isDragging = false;
+		private StringCollection session_shortcuts ; 
+		private Dictionary<string, int> last_pos;
         public Form1()
         {
             InitializeComponent();
+            // --
+            last_pos = new Dictionary<string, int>();
+            // --
             parent_dir = "C:\\";
             current_dir = "C:\\";
             sel_files = new StringCollection();
@@ -34,7 +48,56 @@ namespace SimpleFileExplorer {
             listViewFiles.ContextMenuStrip.ForeColor = Color.Lime; // Texto verde
             listViewFiles.ContextMenuStrip.ShowImageMargin = false; // Remove margem de imagem, se não usada
 			this.Icon = new Icon("app_icon.ico");
+			listViewFiles.MouseDown += Move_MouseDown;
+			listViewFiles.MouseMove += Move_MouseMove;
+            listViewFiles.MouseUp += Move_MouseUp;
+			this.MouseDown += Move_MouseDown;
+			this.MouseMove += Move_MouseMove;
+            this.MouseUp += Move_MouseUp;
+			// -- 
+			session_shortcuts = new StringCollection();
+			update_session_shortcuts();
+			
         }
+		private void Move_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Verifica se o botão esquerdo do mouse foi pressionado
+            if (e.Button == MouseButtons.Left)
+            {
+                _isDragging = true;
+                _dragOffSet = e.Location; // Armazena o deslocamento inicial
+            }
+        }
+
+        private void Move_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging)
+            {
+                // Calcula a nova posição da janela
+                var newLocation = new Point(
+                    this.Location.X + e.X - _dragOffSet.X,
+                    this.Location.Y + e.Y - _dragOffSet.Y);
+
+                // Atualiza a posição da janela
+                this.Location = newLocation;
+            }
+        }
+
+        private void Move_MouseUp(object sender, MouseEventArgs e)
+        {
+            // Finaliza o processo de arraste
+            _isDragging = false;
+        }
+		private void update_session_shortcuts()
+		{
+				listViewSessionShortcuts.Items.Clear();
+				foreach (string path_it in session_shortcuts){
+					ListViewItem item = new ListViewItem(path_it);
+					item.ForeColor = System.Drawing.Color.Lime;
+					listViewSessionShortcuts.Items.Add(item);
+				}
+				
+		}
         private void LoadDirectory(string path)
         {
             try
@@ -128,6 +191,18 @@ namespace SimpleFileExplorer {
                 this.Text = "Simple File Explorer - " + path; // Atualiza o título da janela
                 current_dir = path;
                 label3.Text = path;
+				// set the focused item with last_pos 
+				if ( last_pos.ContainsKey(current_dir) ) {
+					if ( last_pos[current_dir] < listViewFiles.Items.Count  ){
+						listViewFiles.Items[ last_pos[current_dir] ].Focused = true;
+						listViewFiles.Items[ last_pos[current_dir] ].Selected = true;
+					}
+				} else {
+					if ( listViewFiles.Items.Count > 0 ){
+						listViewFiles.Items[0].Focused = true;
+						listViewFiles.Items[0].Selected = true;
+					}
+				}
             }
             catch (UnauthorizedAccessException)
             {
@@ -138,8 +213,39 @@ namespace SimpleFileExplorer {
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
-        private void listViewFiles_KeyDown(object sender, KeyEventArgs e)
+        private void listViewSessionShortcuts_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Tab)
+			{
+				listViewFiles.Focus();
+			}
+			if (e.KeyCode == Keys.Delete)
+			{
+				if (listViewSessionShortcuts.SelectedItems.Count > 0){
+					ListViewItem selectedItem = listViewSessionShortcuts.SelectedItems[0];
+					string path = selectedItem.Text.ToString();
+					session_shortcuts.Remove(path);
+					update_session_shortcuts();
+				}
+			}
+			if (e.KeyCode == Keys.Enter) 
+			{
+				if (listViewSessionShortcuts.SelectedItems.Count > 0){
+					ListViewItem selectedItem = listViewSessionShortcuts.SelectedItems[0];
+					string path = selectedItem.Text.ToString();
+					LoadDirectory(path);
+					listViewFiles.Focus();
+				}
+			}
+		}
+		private void listViewFiles_KeyDown(object sender, KeyEventArgs e)
         {
+			// set last_pos item
+			if ( !last_pos.ContainsKey(current_dir) ){ last_pos.Add(current_dir, listViewFiles.FocusedItem.Index); } else {
+                if (listViewFiles.FocusedItem != null) { last_pos[current_dir] = listViewFiles.FocusedItem.Index; } else {
+                    last_pos[current_dir] = 0;
+                }
+			}
             // Movimenta a janela com Alt + Setas
             if (e.Alt) // Verifica se Alt está pressionado
             {
@@ -677,6 +783,21 @@ namespace SimpleFileExplorer {
                 label1.ForeColor = System.Drawing.Color.Lime; // Verde para diretórios
                 return;
             }
+			if (e.KeyCode == Keys.F5)
+			{
+				LoadDirectory(current_dir);
+				label3.Text = "(refresh) "+current_dir;
+			}
+			if (e.KeyCode == Keys.Tab)
+			{
+				listViewSessionShortcuts.Focus();
+			}
+			if (e.Control && e.KeyCode == Keys.S ){
+				if( ! session_shortcuts.Contains(current_dir) ){
+					session_shortcuts.Add(current_dir);
+					update_session_shortcuts();
+				}
+			}
         }
 
         private void label1_Click(object sender, EventArgs e)

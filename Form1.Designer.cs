@@ -48,6 +48,7 @@
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
+            listViewSessionShortcuts = new ListView();
             contextMenu.SuspendLayout();
             SuspendLayout();
             // 
@@ -60,7 +61,7 @@
             listViewFiles.ForeColor = Color.Lime;
             listViewFiles.Location = new Point(9, 27);
             listViewFiles.Name = "listViewFiles";
-            listViewFiles.Size = new Size(759, 503);
+            listViewFiles.Size = new Size(759, 417);
             listViewFiles.TabIndex = 0;
             listViewFiles.UseCompatibleStateImageBehavior = false;
             listViewFiles.View = View.Details;
@@ -212,11 +213,23 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Consolas", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(12, 533);
+            label3.Location = new Point(12, 447);
             label3.Name = "label3";
             label3.Size = new Size(28, 14);
             label3.TabIndex = 3;
             label3.Text = "...";
+            // 
+            // listViewSessionShortcuts
+            // 
+            listViewSessionShortcuts.BackColor = Color.Black;
+            listViewSessionShortcuts.Font = new Font("Consolas", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            listViewSessionShortcuts.Location = new Point(9, 464);
+            listViewSessionShortcuts.Name = "listViewSessionShortcuts";
+            listViewSessionShortcuts.Size = new Size(759, 81);
+            listViewSessionShortcuts.TabIndex = 4;
+            listViewSessionShortcuts.UseCompatibleStateImageBehavior = false;
+            listViewSessionShortcuts.View = View.List;
+            listViewSessionShortcuts.KeyDown += listViewSessionShortcuts_KeyDown;
             // 
             // Form1
             // 
@@ -224,6 +237,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
             ClientSize = new Size(780, 557);
+            Controls.Add(listViewSessionShortcuts);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -257,5 +271,6 @@
         private ToolStripMenuItem cutToolStripMenuItem;
         private ToolStripMenuItem openToolStripMenuItem;
         private ToolStripMenuItem renameToolStripMenuItem;
+        private ListView listViewSessionShortcuts;
     }
 }
