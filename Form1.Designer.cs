@@ -54,6 +54,7 @@
             // 
             // listViewFiles
             // 
+            listViewFiles.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             listViewFiles.BackColor = Color.Black;
             listViewFiles.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
             listViewFiles.ContextMenuStrip = contextMenu;
@@ -221,6 +222,7 @@
             // 
             // listViewSessionShortcuts
             // 
+            listViewSessionShortcuts.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             listViewSessionShortcuts.BackColor = Color.Black;
             listViewSessionShortcuts.Font = new Font("Consolas", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             listViewSessionShortcuts.Location = new Point(9, 464);

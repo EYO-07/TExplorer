@@ -13,6 +13,7 @@ using System.Drawing;
 // Keyboard Input ~ SimpleFileExplorer {} || Form1 {} || Form1() | ... | listViewFiles_KeyDown() || % ...
 // LoadDirectory() || { .Items.Clear, .Items.Add,  }
 // Execute/Open ~ SimpleFileExplorer {} || Form1 {} || Form1() | ... | listViewFiles_KeyDown() || ... | % enter || ... || % Execute | % Open 
+// Session Shortcut ~ SimpleFileExplorer{} || Form1 {} || listViewFiles_KeyDown() || ... | % ctrl+S || ... | update_session_shortcuts() 
 namespace SimpleFileExplorer {
     public partial class Form1 : Form
     {
@@ -56,6 +57,7 @@ namespace SimpleFileExplorer {
             this.MouseUp += Move_MouseUp;
 			// -- 
 			session_shortcuts = new StringCollection();
+			this.LoadSessionShortcuts();
 			update_session_shortcuts();
 			
         }
@@ -91,10 +93,25 @@ namespace SimpleFileExplorer {
 		private void update_session_shortcuts()
 		{
 				listViewSessionShortcuts.Items.Clear();
+				string last_path_it = "";
+				bool b_intersect = false;
 				foreach (string path_it in session_shortcuts){
 					ListViewItem item = new ListViewItem(path_it);
-					item.ForeColor = System.Drawing.Color.Lime;
+					// $ b_intersect 
+					if (last_path_it != ""){
+						var chars1 = last_path_it.ToCharArray();
+						var chars2 = path_it.ToCharArray();
+						var comms = chars1.Intersect(chars2);
+						b_intersect = ( comms.Count() > 5 );
+					}
+					// --
+					if (b_intersect) {
+						item.ForeColor = System.Drawing.Color.White;
+					} else {						
+						item.ForeColor = System.Drawing.Color.Lime;
+					}
 					listViewSessionShortcuts.Items.Add(item);
+					last_path_it = path_it;
 				}
 				
 		}
@@ -311,6 +328,7 @@ namespace SimpleFileExplorer {
                 }
                 else
                 {
+					this.SaveSessionShortcuts();
                     this.Close();
                 }
             }
@@ -542,7 +560,7 @@ namespace SimpleFileExplorer {
                                 {
                                     MessageBox.Show($"{action}d {itemsProcessed} item(s) in {current_dir}");
                                     LoadDirectory(current_dir);
-                                    if (isForMove) sel_files.Clear(); // Limpa sel_files após mover
+                                    sel_files.Clear(); // Limpa sel_files após mover
                                 }
                                 else
                                 {
@@ -1040,5 +1058,37 @@ namespace SimpleFileExplorer {
 			label1.ForeColor = System.Drawing.Color.Cyan; // Cor diferente para destacar
 			// <<
         }
-    }
+		public void LoadSessionShortcuts()
+		{
+			string filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session_shortcuts.sav");
+			// Check if the file exists
+			if (File.Exists(filename))
+			{
+				// Read all lines from the file
+				foreach (var line in File.ReadLines(filename))
+				{
+					// Add non-empty strings to the StringCollection
+					if (!string.IsNullOrWhiteSpace(line)) this.session_shortcuts.Add(line); 
+				}
+			}
+			else
+			{
+				// Create the file if it does not exist
+				File.Create(filename).Dispose();
+			}
+		}	
+	
+		public void SaveSessionShortcuts()
+		{
+			string filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session_shortcuts.sav");
+			// Use StreamWriter to write the shortcuts to the file
+			using (StreamWriter writer = new StreamWriter(filename))
+			{
+				foreach (string shortcut in this.session_shortcuts)
+				{
+					writer.WriteLine(shortcut);
+				}
+			}
+		}
+	}
 }
